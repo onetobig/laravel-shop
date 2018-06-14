@@ -54,7 +54,7 @@
                     if (!willDelete) {
                         return;
                     }
-                    axios.delete('/user_address/' + id)
+                    axios.delete('/user_addresses/' + id)
                         .then(function () {
                             location.reload();
                         })

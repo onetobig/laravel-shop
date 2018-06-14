@@ -35,4 +35,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserAddress::class);
     }
+
+    public function isOwnerOf($model)
+    {
+        return $this->id == $model->user_id;
+    }
 }

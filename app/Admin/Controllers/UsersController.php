@@ -24,7 +24,7 @@ class UsersController extends Controller
     {
         return Admin::content(function (Content $content) {
 
-            $content->header('header');
+            $content->header('用户列表');
             $content->description('description');
 
             $content->body($this->grid());

@@ -39,8 +39,7 @@ class ProductsController extends Controller
     {
         return Admin::content(function (Content $content) use ($id) {
 
-            $content->header('header');
-            $content->description('description');
+            $content->header('编辑商品');
 
             $content->body($this->form()->edit($id));
         });
@@ -95,11 +94,21 @@ class ProductsController extends Controller
     protected function form()
     {
         return Admin::form(Product::class, function (Form $form) {
+            $form->text('title', '商品名称')->rules('required');
+            $form->image('image', '封面图片')->rules('required|image');
+            $form->editor('description', '商品描述')->rules('required');
+            $form->radio('on_sale', '上架')->options(['1' => '是', '0' => '否'])->default('0');
+            $form->hasMany('skus', function (Form\NestedForm $form) {
+                $form->text('title', 'SKU 名称')->rules('required');
+                $form->text('description', 'SKU 描述')->rules('required');
+                $form->text('price', '单价')->rules('required|numeric|min:0.01');
+                $form->text('stock', '剩余库存')->rules('required|integer|min:0');
+            });
 
-            $form->display('id', 'ID');
-
-            $form->display('created_at', 'Created At');
-            $form->display('updated_at', 'Updated At');
+            // 定义事件回调
+            $form->saving(function (Form $form) {
+                $form->model()->price = collect($form->skus)->min('price');
+            });
         });
     }
 }

@@ -34,7 +34,11 @@
 							</div>
 							<div class="cart_amount"><label>数量</label><input type="text" class="form-control input-sm" vlaue="1"><span>件</span><span class="stock"></span></div>
 							<div class="buttons">
-								<button class="btn btn-success btn-favor">❤ 收藏</button>
+								@if ($favored)
+									<button class="btn btn-danger btn-disfavor">取消收藏</button>
+								@else
+									<button class="btn btn-success btn-favor">❤ 收藏</button>
+								@endif
 								<button class="btn btn-primary btn-add-to-cart">加入购物车</button>
 							</div>
 						</div>
@@ -66,6 +70,34 @@
                 $('.product-info .price span').text($(this).data('price'));
                 $('.product-info .stock').text('库存：' + $(this).data('stock') + '件');
             })
+	        
+	        // 收藏按钮的点击事件
+	        $('.btn-favor').click(function() {
+	            axios.post('{{ route('products.favor', ['product' => $product->id]) }}')
+		            .then(function() {
+		                swal('操作成功', '', 'success')
+			                .then(function() {
+			                    location.reload();
+			                });
+		            }, function(error) {
+                        // 如果返回码是 401 代表没登录
+                        if (error.response && error.response.status === 401) {
+                            swal('请先登录', '', 'error');
+                        } else {
+                            // 其他情况应该是系统挂
+                            swal('系统错误', '', 'error');
+                        }
+		            })
+	        })
+	        $('.btn-disfavor').click(function() {
+	            axios.delete('{{ route('products.disfavor', ['product' => $product->id]) }}')
+		            .then(function() {
+		                swal('操作成功', '', 'success')
+			                .then(function() {
+			                    location.reload();
+			                });
+		            });
+	        });
         })
 	</script>
 @endsection

@@ -88,7 +88,7 @@
                             swal('系统错误', '', 'error');
                         }
 		            })
-	        })
+	        });
 	        $('.btn-disfavor').click(function() {
 	            axios.delete('{{ route('products.disfavor', ['product' => $product->id]) }}')
 		            .then(function() {

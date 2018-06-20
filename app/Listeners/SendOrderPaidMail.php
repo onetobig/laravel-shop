@@ -7,7 +7,7 @@ use App\Notifications\OrderPaidNotificattion;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SerndOrderPaidMail
+class SendOrderPaidMail
 {
     public function handle(OrderPaid $event)
     {

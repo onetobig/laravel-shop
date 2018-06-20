@@ -8,7 +8,7 @@ use App\Models\OrderItem;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class UpdateProductSoldCount
+class UpdateProductSoldCount implements ShouldQueue
 {
     public function handle(OrderPaid $event)
     {

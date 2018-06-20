@@ -229,4 +229,7 @@ return [
     ],
 
     'faker_locale' => 'zh_CN',
+
+    // 订单超时时间 单位：秒
+    'order_ttl' => 1800,
 ];

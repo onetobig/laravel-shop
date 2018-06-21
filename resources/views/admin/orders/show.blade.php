@@ -84,7 +84,63 @@
 					<td>{{ $order->ship_data['express_no'] }}</td>
 				</tr>
 			@endif
+			@if($order->refund_status !== \App\Models\Order::REFUND_STATUS_PENDING)
+				<tr>
+					<td>退款状态：</td>
+					<td colspan="2">{{ \App\Models\Order::$refundStatusMap[$order->refund_status] }}，理由：{{ $order->extra['refund_reason'] }}</td>
+					<td>
+						@if($order->refund_status === \App\Models\Order::REFUND_STATUS_APPLIED)
+							<button class="btn btn-sm btn-success" id="btn-refund-agree">同意</button>
+							<button class="btn btn-sm btn-danger" id="btn-refund-disagree">不同意</button>
+						@endif
+					</td>
+				</tr>
+			@endif
 			</tbody>
 		</table>
 	</div>
 </div>
+
+<script>
+	$(document).ready(function () {
+	    // 不同意
+		$('#btn-refund-disagree').click(function () {
+			swal({
+				title: "输入拒绝退款理由",
+				type: 'input',
+				showCancelButton: true,
+				closeOnConfirm: false,
+				confirmButtonText: '确认',
+				cancelButtonText: '取消',
+			}, function (inputValue) {
+			    if (inputValue === false){
+			        return;
+			    }
+			    
+			    if (!inputValue) {
+			        swal('理由不能为空', '', 'error')
+				    return;
+			    }
+			    
+			    $.ajax({
+				    url: '{{ route('admin.orders.handle_refund', [$order->id]) }}',
+				    type: 'POST',
+				    data: JSON.stringify({
+					    agree: false,
+					    reason: inputValue,
+					    _token: LA.token,
+				    }),
+				    contentType: 'application/json',
+				    success: function (data) {
+				        swal({
+					        title: "操作成功",
+					        type: 'success'
+				        }, function () {
+				            location.reload();
+                        });
+                    }
+			    })
+            })
+        })
+    })
+</script>

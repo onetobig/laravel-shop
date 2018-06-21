@@ -31,6 +31,14 @@ class OrdersController extends Controller
         });
     }
 
+    public function show(Order $order)
+    {
+        return Admin::content(function (Content $content) use ($order) {
+            $content->header('查看订单');
+            $content->body(view('admin.orders.show', ['order' => $order]));
+        });
+    }
+
     /**
      * Edit interface.
      *
@@ -83,17 +91,19 @@ class OrdersController extends Controller
             $grid->ship_status('物流')->display(function ($value) {
                 return Order::$shipStatusMap[$value];
             });
-            $grid->refund_status('退款状态')->display(function ($value){
+            $grid->refund_status('退款状态')->display(function ($value) {
                 return Order::$refundStatusMap[$value];
             });
             $grid->disableCreateButton();
-            $grid->actions(function ($actions){
+            $grid->actions(function ($actions) {
                 $actions->disableDelete();
                 $actions->disableEdit();
+                $actions->append('<a class="btn btn-xs btn-primary" href="'
+                    . route('admin.orders.show', [$actions->getKey()]) . '"> 查看</a>');
             });
 
-            $grid->tools(function ($tools){
-                $tools->batch(function ($batch){
+            $grid->tools(function ($tools) {
+                $tools->batch(function ($batch) {
                     $batch->disableDelete();
                 });
             });

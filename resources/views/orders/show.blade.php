@@ -55,6 +55,16 @@
 									<div class="line-value">{{ $order->ship_data['express_company'] }} {{ $order->ship_data['express_no'] }}</div>
 								</div>
 							@endif
+							@if($order->paid_at && $order->refund_status != \App\Models\Order::REFUND_STATUS_PENDING)
+								<div class="line">
+									<div class="line-label">退款状态：</div>
+									<div class="line-value">{{ \App\Models\Order::$refundStatusMap[$order->refund_status] }}</div>
+								</div>
+								<div class="line">
+									<div class="line-label">退款理由：</div>
+									<div class="line-value">{{ $order->extra['refund_reason'] }}</div>
+								</div>
+							@endif
 						</div>
 						<div class="order-summary text-right">
 							<div class="total-amount">
@@ -83,10 +93,16 @@
 									<button class="btn btn-success btn-sm" id="btn-wechat">微信支付</button>
 								</div>
 							@endif
-							
+						<!-- 如果订单的发货状态为已发货则展示确认收货按钮 -->
 							@if( $order->ship_status === \App\Models\Order::SHIP_STATUS_DELIVERED )
 								<div class="receive-button">
 										<button class="btn btn-sm btn-success" id="btn-receive" type="button">确认收货</button>
+								</div>
+							@endif
+							{{--订单已支付，且退款状态是未退款时展示退款按钮--}}
+							@if($order->paid_at && $order->refund_status === \App\Models\Order::REFUND_STATUS_PENDING)
+								<div class="refund-button">
+									<button class="btn btn-sm btn-danger" id="btn-apply-refund">申请退款</button>
 								</div>
 							@endif
 						</div>
@@ -128,6 +144,25 @@
                 });
 		    });
 			   
+		    $("#btn-apply-refund").click(function () {
+			   swal({
+				   text:  '请输入退款理由',
+				   content: "input",
+			   }).then (function (input) {
+				  if(!input) {
+				      swal('退款理由不可空', '', 'error');
+					  return;
+				  }
+				  
+				  // 请求
+				   axios.post('{{ route('orders.apply_refund', [$order->id]) }}', {reason: input})
+					   .then(function () {
+						   swal('申请退款成功', '', 'success').then(function () {
+							   location.reload();
+                           });
+                       });
+               });
+            })
 		});
 		
 	</script>

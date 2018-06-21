@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', '')
+@section('title', '商品详情')
 @section('content')
 	<div class="row">
 		<div class="col-lg-10 col-lg-offset-1">

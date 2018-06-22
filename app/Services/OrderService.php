@@ -8,6 +8,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\CouponCodeUnavailableException;
 use App\Exceptions\InvalidRequestException;
 use App\Jobs\CloseOrder;
 use App\Models\Order;
@@ -18,9 +19,9 @@ use Auth;
 
 class OrderService
 {
-    public function store(User $user, UserAddress $address, $remark, $items)
+    public function store(User $user, UserAddress $address, $remark, $items, $coupon = null)
     {
-        $order = \DB::transaction(function () use ($user, $address, $remark, $items) {
+        $order = \DB::transaction(function () use ($user, $address, $remark, $items, $coupon) {
             $address->update(['last_used_at' => now()]);
 
             $order = new Order([
@@ -57,6 +58,15 @@ class OrderService
                 }
             }
 
+            //  优惠券
+            if ($coupon) {
+                $coupon->checkAvailable($totalAmount);
+                $totalAmount = $coupon->getAdjustedPrice($totalAmount);
+                $order->couponCode()->associate($coupon);
+                if ($coupon->changeUsed() <= 0) {
+                    throw new CouponCodeUnavailableException('该优惠券已被兑换完');
+                }
+            }
             //  更新订单总额
             $order->update(['total_amount' => $totalAmount]);
 

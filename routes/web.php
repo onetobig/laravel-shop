@@ -16,7 +16,6 @@ Route::get('products', 'ProductsController@index')->name('products.index');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
 
 Route::group(['middleware' => 'auth'], function() {
     Route::get('/email_verify_notice', 'PagesController@emailVerifyNotice')->name('email_verify_notice');
@@ -30,5 +29,6 @@ Route::group(['middleware' => 'auth'], function() {
         Route::put('user_addresses/{user_address}', 'UserAddressesController@update')->name('user_addresses.update');
         Route::delete('user_addresses/{user_address}', 'UserAddressesController@destroy')->name('user_addresses.destroy');
         Route::post('user_addresses', 'UserAddressesController@store')->name('user_addresses.store');
+        Route::get('products/{product}', 'ProductsController@show')->name('products.show');
     });
 });

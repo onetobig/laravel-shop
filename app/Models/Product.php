@@ -16,7 +16,7 @@ class Product extends Model
         'on_sale' => 'boolean',
     ];
 
-    public function sku()
+    public function skus()
     {
         return $this->hasMany(ProductSku::class);
     }

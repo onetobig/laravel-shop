@@ -13,7 +13,7 @@ class ProductsSeeder extends Seeder
     {
         $products = factory(\App\Models\Product::class, 30)->create();
         foreach ($products as $product) {
-            $skus = factory(\App\Models\ProductSku::class)->create(['product_id' => $product->id]);
+            $skus = factory(\App\Models\ProductSku::class, 3)->create(['product_id' => $product->id]);
             $product->update(['price' => $skus->min('price')]);
         }
     }

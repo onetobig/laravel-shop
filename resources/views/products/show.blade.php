@@ -109,6 +109,24 @@
                         }
                     });
             });
+            
+            $('.btn-add-to-cart').click(function () {
+                axios.post('{{ route('cart.add') }}', {
+                    sku_id: $('label.active input[name=skus]').val(),
+	                amount: $('.cart_amount input').val(),
+                })
+	                .then(function () {
+		                swal('加入购物车成功', '', 'success');
+                    }, function (error) {
+		                if (error.response.status === 401) {
+		                    swal('请先登录', '', 'error');
+		                } else if (error.response.status === 422) {
+		                    helper.swalError(error.response.data.errors)
+		                } else {
+		                    helper.systemError();
+		                }
+                    })
+            });
         });
 	</script>
 @endsection

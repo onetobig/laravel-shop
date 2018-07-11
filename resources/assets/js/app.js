@@ -18,6 +18,8 @@ window.Vue = require('vue');
 require('./components/SelectDistrict');
 require('./components/UserAddressesCreateAndEdit');
 
+window.helper = require('./helpers');
+
 const app = new Vue({
     el: '#app'
 });

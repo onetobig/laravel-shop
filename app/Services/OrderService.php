@@ -9,8 +9,10 @@
 namespace App\Services;
 
 
+use App\Exceptions\CouponCodeUnavailableException;
 use App\Exceptions\InvalidRequestException;
 use App\Jobs\CloseOrder;
+use App\Models\CouponCode;
 use App\Models\Order;
 use App\Models\ProductSku;
 use App\Models\User;
@@ -18,9 +20,9 @@ use App\Models\UserAddress;
 
 class OrderService
 {
-    public function store(User $user, $address_id, $items, $remark)
+    public function store(User $user, $address_id, $items, $remark, CouponCode $coupon = null)
     {
-        $order = \DB::transaction(function () use ($user, $address_id, $remark, $items) {
+        $order = \DB::transaction(function () use ($user, $address_id, $remark, $items, $coupon) {
             $address = UserAddress::find($address_id);
             $address->update(['last_used_at' => now()]);
 
@@ -55,6 +57,14 @@ class OrderService
             }
 
             // 更新订单总额
+            if ($coupon) {
+                $coupon->checkAvailable($totalAmount);
+                $totalAmount = $coupon->getAdjustedPrice($totalAmount);
+                $order->couponCode()->associate($coupon);
+                if ($coupon->changeUsed() <= 0) {
+                    throw new CouponCodeUnavailableException('该优惠券已被兑完');
+                }
+            }
             $order->update(['total_amount' => $totalAmount]);
 
             // 将下单的商品从购物车移走

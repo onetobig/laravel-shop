@@ -61,7 +61,7 @@
 								<div class="col-sm-9 col-md-7">
 									<select name="address" class="form-control">
 										@foreach($addresses as $address)
-											<option value="{{ $address->id }}">{{ $address->full_address }} {{ $address->contact_name }} {{ $address->contact_name }}</option>
+											<option value="{{ $address->id }}">{{ $address->full_address }} {{ $address->contact_name }} {{ $address->contact_phone }}</option>
 										@endforeach
 									</select>
 								</div>

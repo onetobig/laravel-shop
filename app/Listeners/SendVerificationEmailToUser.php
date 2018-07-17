@@ -7,7 +7,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendVerificationEmailToUser
+class SendVerificationEmailToUser implements ShouldQueue
 {
     public function handle(Registered $event)
     {

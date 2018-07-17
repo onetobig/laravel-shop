@@ -73,6 +73,7 @@ class ProductsController extends Controller
 
             $grid->id('ID')->sortable();
             $grid->title('商品名称');
+            $grid->image_url('商品图片')->image('', 120);
             $grid->on_sale('已上架')->display(function ($value) {
                 return $value ? '是' : '否';
             });

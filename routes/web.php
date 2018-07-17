@@ -11,5 +11,13 @@
 |
 */
 Route::get('/', 'PagesController@root')->name('root');
-
 Auth::routes();
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('email_verify_notice', 'PagesController@emailVerifyNotice')->name('email_verify_notice');
+
+    // 邮箱验证后方可访问
+    Route::group(['middleware' => 'email_verified'], function () {
+
+    });
+});

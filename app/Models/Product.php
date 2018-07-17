@@ -16,7 +16,6 @@ class Product extends Model
         'on_sale' => 'boolean',
     ];
 
-    protected $appends = ['image_url'];
 
     public function skus()
     {

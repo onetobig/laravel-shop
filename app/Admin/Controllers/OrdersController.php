@@ -23,7 +23,6 @@ class OrdersController extends Controller
     public function index()
     {
         return Admin::content(function (Content $content) {
-
             $content->header('订单列表');
             $content->body($this->grid());
         });
@@ -46,6 +45,13 @@ class OrdersController extends Controller
         });
     }
 
+    public function show(Order $order)
+    {
+        return Admin::content(function (Content $content) use ($order) {
+            $content->header('查看订单');
+            $content->body(view('admin.orders.show', compact('order')));
+        });
+    }
     /**
      * Create interface.
      *
@@ -85,6 +91,11 @@ class OrdersController extends Controller
             $grid->actions(function ($actions) {
                 $actions->disableDelete();
                 $actions->disableEdit();
+                $url = route('admin.orders.show', [$actions->getKey()]);
+                $showBtn = <<<EOT
+<a class="btn btn-xs btn-primary" href="{$url}">查看</a>
+EOT;
+                $actions->append($showBtn);
             });
             $grid->tools(function ($tools) {
                 $tools->batch(function ($batch) {

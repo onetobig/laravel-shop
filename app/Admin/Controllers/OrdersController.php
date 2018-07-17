@@ -158,7 +158,7 @@ EOT;
         }
 
         if ($request->input('agree')) {
-            $this->_refundOrder($order);
+            $order = $this->_refundOrder($order);
         } else {
             $extra = $order->extra ?: [];
             $extra['refund_disagree_reason'] = $request->input('reason');
@@ -203,5 +203,6 @@ EOT;
                 throw new InternalException('未知订单支付方式：' . $order->payment_method);
                 break;
         }
+        return $order;
     }
 }

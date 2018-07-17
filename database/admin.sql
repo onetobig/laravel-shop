@@ -21,7 +21,7 @@
 
 LOCK TABLES `admin_menu` WRITE;
 /*!40000 ALTER TABLE `admin_menu` DISABLE KEYS */;
-INSERT INTO `admin_menu` VALUES (1,0,1,'首页','fa-bar-chart','/',NULL,'2018-07-16 09:06:53'),(2,0,6,'系统管理','fa-tasks',NULL,NULL,'2018-07-17 03:32:32'),(3,2,7,'管理员','fa-users','auth/users',NULL,'2018-07-17 03:32:32'),(4,2,8,'角色','fa-user','auth/roles',NULL,'2018-07-17 03:32:32'),(5,2,9,'权限','fa-ban','auth/permissions',NULL,'2018-07-17 03:32:32'),(6,2,10,'菜单','fa-bars','auth/menu',NULL,'2018-07-17 03:32:32'),(7,2,11,'操作日志','fa-history','auth/logs',NULL,'2018-07-17 03:32:32'),(8,0,2,'用户管理','fa-users','/users','2018-07-16 09:20:10','2018-07-16 09:47:12'),(9,0,3,'商品管理','fa-cubes','/products','2018-07-16 09:47:02','2018-07-16 09:47:12'),(10,0,4,'订单管理','fa-rmb','/orders','2018-07-17 01:38:50','2018-07-17 01:39:04'),(11,0,12,'系统配置','fa-toggle-on','config','2018-07-17 02:22:33','2018-07-17 05:52:27'),(12,0,5,'优惠券管理','fa-tags','/coupon_codes','2018-07-17 03:32:15','2018-07-17 03:32:32');
+INSERT INTO `admin_menu` VALUES (1,0,1,'首页','fa-bar-chart','/',NULL,'2018-07-16 09:06:53'),(2,0,6,'系统管理','fa-tasks',NULL,NULL,'2018-07-17 03:32:32'),(3,2,7,'管理员','fa-users','auth/users',NULL,'2018-07-17 03:32:32'),(4,2,8,'角色','fa-user','auth/roles',NULL,'2018-07-17 03:32:32'),(5,2,9,'权限','fa-ban','auth/permissions',NULL,'2018-07-17 03:32:32'),(6,2,10,'菜单','fa-bars','auth/menu',NULL,'2018-07-17 03:32:32'),(7,2,11,'操作日志','fa-history','auth/logs',NULL,'2018-07-17 03:32:32'),(8,0,2,'用户管理','fa-users','/users','2018-07-16 09:20:10','2018-07-16 09:47:12'),(9,0,3,'商品管理','fa-cubes','/products','2018-07-16 09:47:02','2018-07-16 09:47:12'),(10,0,4,'订单管理','fa-rmb','/orders','2018-07-17 01:38:50','2018-07-17 01:39:04'),(11,0,12,'系统配置','fa-toggle-on','configs','2018-07-17 02:22:33','2018-07-17 06:31:57'),(12,0,5,'优惠券管理','fa-tags','/coupon_codes','2018-07-17 03:32:15','2018-07-17 03:32:32');
 /*!40000 ALTER TABLE `admin_menu` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -100,6 +100,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `admin_config` WRITE;
 /*!40000 ALTER TABLE `admin_config` DISABLE KEYS */;
+INSERT INTO `admin_config` VALUES (1,'next_bonus_time','never','never：从不\r\nalways：一直','2018-07-17 06:29:47','2018-07-17 06:29:47');
 /*!40000 ALTER TABLE `admin_config` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -112,4 +113,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-07-17  5:54:22
+-- Dump completed on 2018-07-17  6:32:16

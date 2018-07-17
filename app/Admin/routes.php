@@ -9,7 +9,6 @@ Route::group([
     'namespace'     => config('admin.route.namespace'),
     'middleware'    => config('admin.route.middleware'),
 ], function (Router $router) {
-
     $router->get('/', 'HomeController@index');
     $router->get('users', 'UsersController@index');
     $router->get('products', 'ProductsController@index');
@@ -27,4 +26,9 @@ Route::group([
     $router->get('coupon_codes/{id}/edit', 'CouponCodesController@edit');
     $router->put('coupon_codes/{id}', 'CouponCodesController@update');
     $router->delete('coupon_codes/{id}', 'CouponCodesController@destroy');
+    $router->get('configs', 'ConfigController@index');
+    $router->get('configs/create', 'ConfigController@create');
+    $router->post('configs', 'ConfigController@store');
+    $router->get('configs/{id}/edit', 'ConfigController@edit');
+    $router->put('configs/{id}', 'ConfigController@update');
 });

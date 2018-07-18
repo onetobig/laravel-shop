@@ -20,5 +20,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     // 邮箱验证后方可访问
     Route::group(['middleware' => 'email_verified'], function () {
+        Route::get('user_addresses', 'UserAddressesController@index')->name('user_addresses.index');
+        Route::post('user_addresses', 'UserAddressesController@store')->name('user_addresses.store');
+        Route::get('user_addresses/create', 'UserAddressesController@create')->name('user_addresses.create');
     });
 });

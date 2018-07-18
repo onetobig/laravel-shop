@@ -47,38 +47,38 @@ Vue.component('select-district', {
         districtId() {
             this.$emit('change', [this.provinces[this.provinceId], this.cities[this.cityId], this.districts[this.districtId]]);
         },
-        create() {
-            this.setFormValue(this.initValue);
-        },
-        methods: {
-            setFormValue(value) {
-                value = _.filter(value);
-                if (value.length === 0) {
-                    this.provinceId = '';
-                    return;
-                }
-                const provinceId = _.findKey(this.provinces, o => o === value[0]);
-                if (!provinceId) {
-                    this.provinceId = '';
-                    return;
-                }
-                this.provinceId = provinceId;
-
-                const cityId = _.findKey(addressData[provinceId], o => o === value[1]);
-                if (!cityId) {
-                    this.cityId = '';
-                    return;
-                }
-                this.cityId = cityId;
-
-                const districtId = _.findKey(addressData[cityId], o => o === value[2]);
-                if (!districtId) {
-                    this.districtId = '';
-                    return;
-                }
-                this.districtId = districtId;
-
+    },
+    created() {
+        this.setFormValue(this.initValue);
+    },
+    methods: {
+        setFormValue(value) {
+            value = _.filter(value);
+            if (value.length === 0) {
+                this.provinceId = '';
+                return;
             }
+            const provinceId = _.findKey(this.provinces, o => o === value[0]);
+            if (!provinceId) {
+                this.provinceId = '';
+                return;
+            }
+            this.provinceId = provinceId;
+
+            const cityId = _.findKey(addressData[provinceId], o => o === value[1]);
+            if (!cityId) {
+                this.cityId = '';
+                return;
+            }
+            this.cityId = cityId;
+
+            const districtId = _.findKey(addressData[cityId], o => o === value[2]);
+            if (!districtId) {
+                this.districtId = '';
+                return;
+            }
+            this.districtId = districtId;
+
         }
     }
 });

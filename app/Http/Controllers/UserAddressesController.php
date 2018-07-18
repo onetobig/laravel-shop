@@ -20,6 +20,12 @@ class UserAddressesController extends Controller
         return view('user_addresses.create_and_edit', compact('address'));
     }
 
+    public function edit(UserAddress $userAddress)
+    {
+        $this->authorize('own', $userAddress);
+        return view('user_addresses.create_and_edit', ['address' => $userAddress]);
+    }
+
     public function store(UserAddressRequest $request)
     {
         $request->user()->addresses()->create($request->only([
@@ -33,5 +39,28 @@ class UserAddressesController extends Controller
         ]));
 
         return redirect()->route('user_addresses.index');
+    }
+
+    public function update(UserAddress $userAddress, UserAddressRequest $request)
+    {
+        $this->authorize('own', $userAddress);
+        $userAddress->update($request->only([
+            'province',
+            'city',
+            'district',
+            'address',
+            'zip',
+            'contact_name',
+            'contact_phone',
+        ]));
+
+        return redirect()->route('user_addresses.index');
+    }
+
+    public function destroy(UserAddress $userAddress)
+    {
+        $this->authorize('own', $userAddress);
+        $userAddress->delete();
+        return [];
     }
 }

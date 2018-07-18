@@ -23,12 +23,14 @@
 						@endif
 						<user-addresses-create-and-edit inline-template>
 							@if($address->id)
-								<form class="form-horizontal" role="form" method="post" action="{{ route('user_addresses.store') }}">
+								<form class="form-horizontal" role="form" method="post" action="{{ route('user_addresses.update', [$address->id]) }}">
+									{{ method_field('PUT') }}
 							@else
 								<form class="form-horizontal" role="form" method="post" action="{{ route('user_addresses.store') }}">
 							@endif
 									{{ csrf_field() }}
-								<select-district inline-template @change="onDistrictChanged">
+								<select-district inline-template @change="onDistrictChanged" :init-value="{{ json_encode([$address->province, $address->city, $address->district]) }}">
+									
 									<div class="form-group">
 										<label class="control-label col-sm-2">省市区</label>
 										<div class="col-sm-3">

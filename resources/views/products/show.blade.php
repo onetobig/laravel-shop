@@ -109,7 +109,10 @@
                     sku_id: $('label.sku-btn.active input[name=skus]').val(),
                     amount: $('.cart_amount input').val(),
                 }).then(function () {
-                    swal('加入购物车成功', '', 'success');
+                    swal('加入购物车成功', '', 'success')
+	                    .then(function () {
+		                    location.href = '{{ route('cart.index') }}';
+                        })
                 }, function (error) {
                     if (error.response.status === 401) {
                         swal('请先登录', '', 'error');

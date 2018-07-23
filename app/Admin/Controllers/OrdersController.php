@@ -85,6 +85,7 @@ class OrdersController extends Controller
             $grid->actions(function ($actions) {
                $actions->disableDelete();
                $actions->disableEdit();
+               $actions->append('<a class="btn btn-xs btn-primary" href="' . route('admin.orders.show', [$actions->getKey()]) .'">查看</a>');
             });
             $grid->tools(function ($tools) {
                 $tools->batch(function ($batch) {
@@ -107,6 +108,14 @@ class OrdersController extends Controller
 
             $form->display('created_at', 'Created At');
             $form->display('updated_at', 'Updated At');
+        });
+    }
+
+    public function show(Order $order)
+    {
+        return Admin::content(function (Content $content) use ($order) {
+            $content->header('查看订单');
+            $content->body(view('admin.orders.show', ['order' => $order]));
         });
     }
 }

@@ -36,6 +36,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('orders', 'OrdersController@index')->name('orders.index');
         Route::get('orders/{order}', 'OrdersController@show')->name('orders.show');
         Route::get('payment/{order}/alipay', 'PaymentController@payByAlipay')->name('payment.alipay');
+        Route::post('orders/{order}/received', 'OrdersController@received')->name('orders.received');
     });
 });
 

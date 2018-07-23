@@ -45,7 +45,7 @@
 															</span>
 														</div>
 													</td>
-													<td class="sku-price text-center">￥{{ $item->productSku->price }}</td>
+													<td class="sku-price text-center">￥{{ $item->price }}</td>
 													<td class="sku-amount text-center">{{ $item->amount }}</td>
 													@if($index === 0)
 														<td rowspan="{{ count($order->items) }}" class="text-center total-amount">￥{{ $order->total_amount }}</td>
@@ -65,7 +65,7 @@
 															@endif
 														</td>
 														<td rowspan="{{ count($order->items) }}" class="text-center">
-															<a href="" class="btn btn-primary btn-xs">查看订单</a>
+															<a href="{{ route('orders.show', [$order->id]) }}" class="btn btn-primary btn-xs">查看订单</a>
 														</td>
 													@endif
 												</tr>

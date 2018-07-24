@@ -73,6 +73,19 @@
 										<textarea name="remark" class="form-control" rows="3"></textarea>
 									</div>
 								</div>
+								<!-- 优惠券开始 -->
+								<div class="form-group">
+									<label class="control-label col-sm-3">优惠码</label>
+									<div class="col-sm-4">
+										<input type="text" class="form-control" name="coupon_code">
+										<span class="help-block" id="coupon_desc"></span>
+									</div>
+									<div class="col-sm-3">
+										<button class="btn btn-success" id="btn-check-coupon" type="button">检查</button>
+										<button class="btn btn-danger" style="display: none;" id="btn-cancel-coupon" type="button">取消</button>
+									</div>
+								</div>
+								<!-- 优惠券结束 -->
 								<div class="form-group">
 									<div class="col-sm-offset-3 col-sm-3">
 										<button class="btn btn-primary btn-create-order" type="button">提交订单</button>
@@ -157,6 +170,37 @@
 					    }
                     })
             });
+		    
+		    $('#btn-check-coupon').click(function () {
+		        let code = $('input[name=coupon_code]').val();
+		        if (!code) {
+		            swal('请输入优惠码', '', 'warning');
+		            return;
+		        }
+			    // 调用检查接口
+			    axios.get('/coupon_codes/' + encodeURIComponent(code))
+				    .then(function (response) {
+                        $('#coupon_desc').text(response.data.description); // 输出优惠信息
+                        $('input[name=coupon_code]').prop('readonly', true); // 禁用输入框
+                        $('#btn-cancel-coupon').show(); // 显示 取消 按钮
+                        $('#btn-check-coupon').hide(); // 隐藏 检查 按钮
+                    }, function (error) {
+					    if (error.response.status === 404) {
+					        swal('优惠码不存在', '', 'error');
+					    } else if (error.response.status === 403) {
+					        swal(error.response.data.msg, '', 'error');
+					    } else {
+					        swal('系统内部错误', '', 'error');
+					    }
+                    });
+            });
+		    
+		    $('#btn-cancel-coupon').click(function () {
+		        $('#coupon_desc').text('');
+		        $('input[name=coupon_code]').prop('readonly', false);
+		        $('#btn-cancel-coupon').hide();
+		        $('#btn-check-coupon').show();
+            })
         });
 	</script>
 @endsection

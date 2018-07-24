@@ -55,7 +55,7 @@ class OrderService
             }
             // 更新订单总额
             if ($coupon) {
-                $coupon->checkAvailable($totalAmount);
+                $coupon->checkAvailable($user, $totalAmount);
                 $totalAmount = $coupon->getAdjustedPrice($totalAmount);
                 $order->couponCode()->associate($coupon);
                 if ($coupon->changeUsed() <= 0) {

@@ -2,7 +2,7 @@
 
 return [
     'faker_locale' => 'zh_CN',
-    'order_ttl' => 30,
+    'order_ttl' => 1800,
     /*
     |--------------------------------------------------------------------------
     | Application Name

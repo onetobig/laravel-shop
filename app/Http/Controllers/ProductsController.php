@@ -11,7 +11,7 @@ class ProductsController extends Controller
 {
     public function index(Request $request)
     {
-        $builder = Product::query();
+        $builder = Product::query()->where('on_sale', true);
 
         if ($search = $request->search) {
             $like = "%{$search}%";

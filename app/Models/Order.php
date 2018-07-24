@@ -50,7 +50,7 @@ class Order extends Model
         'reviewed'  => 'boolean',
         'address'   => 'json',
         'ship_data' => 'json',
-        'extra'     => 'json,'
+        'extra'     => 'json',
     ];
 
     protected $dates = [

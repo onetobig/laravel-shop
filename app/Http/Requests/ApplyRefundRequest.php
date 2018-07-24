@@ -2,9 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 
-class ApplyRefundRequest extends FormRequest
+class ApplyRefundRequest extends Request
 {
     public function rules()
     {

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Ramsey\Uuid\Uuid;
 
 class Order extends Model
 {
@@ -21,6 +22,7 @@ class Order extends Model
         self::REFUND_STATUS_APPLIED    => '已申请退款',
         self::REFUND_STATUS_PROCESSING => '退款中',
         self::REFUND_STATUS_FAILED     => '退款失败',
+        self::REFUND_STATUS_SUCCESS    => '退款成功',
     ];
 
     public static $shipStatusMap = [
@@ -93,5 +95,14 @@ class Order extends Model
     public function items()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public static function getAvailableRefundNo()
+    {
+        do {
+            $no = Uuid::uuid4()->getHex();
+        } while (self::query()->where('refund_no', $no)->exists());
+
+        return $no;
     }
 }

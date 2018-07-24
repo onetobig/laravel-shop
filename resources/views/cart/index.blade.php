@@ -134,6 +134,7 @@
 			        address_id: $('#order-form').find('select[name=address]').val(),
 				    items: [],
 				    remark: $('#order-form').find('textarea[name=remark]').val(),
+				    coupon_code: $('input[name=coupon_code]').val(),
 			    };
 			    $('table tr[data-id]').each(function () {
 			        var $checkbox = $(this).find('input[name=select][type=checkbox]');
@@ -165,7 +166,9 @@
                             });
 					        html += '</div>';
 					        swal({content: $(html)[0], icon:'error'});
-					    } else {
+					    } else if (error.response.status === 403) {
+					        swal(error.response.data.msg, '', 'error');
+					    }else {
 					        swal('系统错误', '', 'error');
 					    }
                     })

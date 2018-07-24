@@ -18,6 +18,6 @@ class CouponCodeUnavailableException extends Exception
             return response()->json(['msg' => $this->message], $this->code);
         }
 
-        return view('pages.error', ['msg' => $this->message]);
+        return redirect()->back()->withErrors(['coupon_code' => $this->message]);
     }
 }

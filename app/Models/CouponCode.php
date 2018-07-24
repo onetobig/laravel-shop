@@ -69,4 +69,22 @@ class CouponCode extends Model
             throw new CouponCodeUnavailableException('订单金额不满足该优惠券的最低金额');
         }
     }
+
+    public function getAdjustedPrice($orderAmount)
+    {
+        if ($this->type === self::TYPE_FIXED) {
+            return max(0.01, $orderAmount - $this->value);
+        }
+
+        return number_format($orderAmount * (100 - $this->value) / 100, 2, '.', '');
+    }
+
+    public function changeUsed($increase = true)
+    {
+        if ($increase) {
+            return $this->newQuery()->where('id', $this->id)->where('used', '<', $this->total)->increment('used');
+        } else {
+            return $this->newQuery()->where('id', $this->id)->where('used', '>', 0)->decrement('used');
+        }
+    }
 }

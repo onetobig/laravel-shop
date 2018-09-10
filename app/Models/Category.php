@@ -53,4 +53,12 @@ class Category extends Model
             ->orderBy('level')
             ->get();
     }
+
+    public function getFullNameAttribute()
+    {
+        return $this->ancestors
+            ->pluck('name')
+            ->push($this->name)
+            ->implode(' - ');
+    }
 }

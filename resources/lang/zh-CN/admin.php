@@ -109,4 +109,6 @@ return [
         'filter_clear'       => '显示全部',
         'filter_placeholder' => '过滤',
     ],
+
+    'continue_editing' => '继续编辑',
 ];

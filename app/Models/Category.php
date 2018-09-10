@@ -21,7 +21,7 @@ class Category extends Model
                 $category->path = '-';
             } else {
                 $category->level = $category->parent->level + 1;
-                $category->path = $category->parent->path . $category->id . '-';
+                $category->path = $category->parent->path . $category->parent_id . '-';
             }
         });
     }

@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidRequestException;
+use App\Models\Category;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Services\CategoryService;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, CategoryService $categoryService)
     {
         $builder = Product::query()->where('on_sale', true);
 
@@ -25,6 +27,17 @@ class ProductsController extends Controller
             });
         }
 
+        // 类目搜索
+        if ($request->input('category_id') && $category = Category::find($request->input('category_id'))) {
+            if ($category->is_directory) {
+                $builder->whereHas('category', function ($query) use ($category) {
+                    $query->where('path', 'like', $category->path . $category->id . '-');
+                });
+            } else {
+                $builder->where('category_id', $category->id);
+            }
+        }
+
         if ($order = $request->order) {
             if (preg_match('/^(.+)_(asc|desc)$/', $order, $m)) {
                 if (in_array($m[1], ['price', 'sold_count', 'rating'])) {
@@ -38,7 +51,9 @@ class ProductsController extends Controller
             'order' => $order,
             'search' => $search,
         ];
-        return view('products.index', compact('products', 'filters'));
+        $category = $category ?? null;
+        $categoryTree = $categoryService->getCategoryTree();
+        return view('products.index', compact('products', 'filters', 'category', 'categoryTree'));
     }
 
     public function show(Product $product, Request $request)

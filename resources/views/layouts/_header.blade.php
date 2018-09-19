@@ -17,7 +17,18 @@
 		<!-- Collect the nav links, forms, and other content for toggling -->
 		<div class="collapse navbar-collapse" id="app-navbar-collapse">
 			
-			<ul class="nav navbar-nav"></ul>
+			<ul class="nav navbar-nav">
+				{{--类目--}}
+				@if(isset($categoryTree))
+					<li>
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">所有类目 <b class="caret"></b></a>
+						<ul class="dropdown-menu multi-level">
+							@each('layouts._category_item', $categoryTree, 'category')
+						</ul>
+					</li>
+				@endif
+				
+			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				@guest
 					<li class="dropdown"><a href="{{ route('login') }}">登录</a></li>

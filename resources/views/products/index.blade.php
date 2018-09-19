@@ -8,6 +8,17 @@
 					<div class="panel-body">
 						<div class="row">
 							<form action="{{ route('products.index') }}" class="form-inline search-form">
+								<a href="{{ route('products.index') }}" class="all-products">全部</a> &gt;
+								@if ($category)
+									@foreach($category->ancestors as $ancestor)
+										<span class="category">
+											<a href="{{ route('products.index', ['category_id' => $ancestor->id]) }}">{{ $ancestor->name }}</a>
+										</span>
+										<span>></span>
+									@endforeach
+									<span class="category">{{ $category->name }}<span> ></span></span>
+										<input type="hidden" name="category_id" value="{{ $category->id }}">
+								@endif
 								<input type="text" class="form-control input-sm" name="search" placeholder="搜索">
 								<button class="btn btn-primary btn-sm">搜索</button>
 								<select name="order" id="" class="form-control input-sm pull-right">
@@ -21,6 +32,22 @@
 								</select>
 							</form>
 						</div>
+						
+						{{--展示子类目--}}
+						<div class="filters">
+							@if($category && $category->is_directory)
+								<div class="row">
+									<div class="col-xs-3 filter-key">子类目：</div>
+									<div class="col-xs-9 filter-values">
+										@foreach($category->children as $child)
+											<a href="{{ route("products.index", ['category_id' => $child->id]) }}">{{ $child->name }}</a>
+										@endforeach
+									</div>
+								</div>
+							@endif
+						</div>
+						
+						
 						<div class="row products-list">
 							@foreach($products as $product)
 								<div class="col-xs-3 product-item">

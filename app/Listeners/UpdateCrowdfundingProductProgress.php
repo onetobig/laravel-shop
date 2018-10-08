@@ -16,13 +16,13 @@ class UpdateCrowdfundingProductProgress
             return;
         }
 
-        $crowdfunding = $order->items[0]->prodcut->crowdfunding;
+        $crowdfunding = $order->items[0]->product->crowdfunding;
 
         $data = Order::query()
             ->where('type', Order::TYPE_CROWDFUNDING)
             ->whereNotNull('paid_at')
             ->whereHas('items', function ($query) use ($crowdfunding) {
-                $query->where('product_id', $crowdfunding->prodcut_id);
+                $query->where('product_id', $crowdfunding->product_id);
             })
             ->first([
                 // 订单总额

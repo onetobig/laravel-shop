@@ -30,7 +30,7 @@ class PayServiceProvider extends ServiceProvider
             $config['notify_url'] = route('payment.alipay.notify');
             $config['return_url'] = route('payment.alipay.return');
             if (app()->environment() !== 'production') {
-                $config['notify_url']  = 'http://requestbin.leo108.com/zz4xs7zz';
+                $config['notify_url']  = ngrok_url('payment.alipay.notify');
                 $config['mode'] = 'dev';
                 $config['log']['level'] = Logger::DEBUG;
             } else {
@@ -41,6 +41,7 @@ class PayServiceProvider extends ServiceProvider
 
         $this->app->singleton('wechat_pay', function() {
             $config = config('pay.wechat');
+//            $config['notify_url'] = ngrok_url('payment.wechat.notify');
             if (app()->environment() !== 'production') {
                 $config['log']['level'] = Logger::DEBUG;
             } else {

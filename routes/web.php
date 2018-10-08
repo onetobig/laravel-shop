@@ -51,9 +51,9 @@ Route::post('payment/alipay/notify', 'PaymentController@alipayNotify')->name('pa
 Route::get('payment/alipay/return', 'PaymentController@alipayReturn')->name('payment.alipay.return');
 
 Route::get('alipay', function () {
-    return app('alipay')->web([
+    return htmlspecialchars(app('alipay')->web([
         'out_trade_no' => time(),
         'total_amount' => '1',
         'subject'      => 'test subject - 测试',
-    ]);
+    ]));
 });

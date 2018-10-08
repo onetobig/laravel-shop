@@ -55,8 +55,10 @@
 									<div class="line-value">{{ $order->ship_data['express_company'] }} {{ $order->ship_data['express_no'] }}</div>
 								</div>
 							@endif
-						<!-- 订单已支付，且退款状态不是未退款时展示退款信息 -->
-							@if($order->paid_at && $order->refund_status !== \App\Models\Order::REFUND_STATUS_PENDING)
+						<!-- 不是众筹订单，订单已支付，且退款状态不是未退款时展示退款信息 -->
+							@if($order->type !== \App\Models\Order::TYPE_CROWDFUNDING &&
+								$order->paid_at &&
+								$order->refund_status !== \App\Models\Order::REFUND_STATUS_PENDING)
 								<div class="line">
 									<div class="line-label">退款状态：</div>
 									<div class="line-value">{{ \App\Models\Order::$refundStatusMap[$order->refund_status] }}</div>

@@ -100,13 +100,9 @@ class OrdersController extends Controller
     public function applyRefund(Order $order, ApplyRefundRequest $request)
     {
         $this->authorize('own', $order);
-        if (!$order->paid_at) {
-            throw new InvalidRequestException('该订单未支付，不可退款');
-        }
-
-        if ($order->refund_status !== Order::REFUND_STATUS_PENDING) {
-            throw new InvalidRequestException('该订单已经申请过退款，请勿重复申请');
-        }
+        throw_if(!$order->paid_at, new InvalidRequestException('该订单未支付，不可退款'));
+        throw_if($order->type === Order::TYPE_CROWDFUNDING, new InvalidRequestException('众筹订单不能退款'));
+        throw_if($order->refund_status !== Order::REFUND_STATUS_PENDING, new InvalidRequestException('该订单已经申请过退款，请勿重复申请'));
 
         $extra                  = $order->extra ?: [];
         $extra['refund_reason'] = $request->input('reason');

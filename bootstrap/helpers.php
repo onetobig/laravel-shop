@@ -29,3 +29,9 @@ if (!function_exists('ngrok_url')) {
         return route($routerName, $parameters);
     }
 }
+if (!function_exists('big_number')) {
+    function big_number($number, $scale = 2)
+    {
+        return new \Moontoast\Math\BigNumber($number, $scale);
+    }
+}

@@ -105,7 +105,12 @@
 								</div>
 							@endif
 							@if(!$order->paid_at && !$order->closed)
-								<a href="{{ route('payment.alipay', ['order' => $order->id]) }}" class="btn btn-primary btn-sm">支付宝支付</a>
+								<div class="payment-buttons">
+									<a href="{{ route('payment.alipay', ['order' => $order->id]) }}" class="btn btn-primary btn-sm">支付宝支付</a>
+									@if($order->total_amount >= config('app.min_installment_amount'))
+										<button class="btn btn-sm btn-info" id="btn-installment">分期付款</button>
+									@endif
+								</div>
 							@endif
 							@if($order->ship_status === \App\Models\Order::SHIP_STATUS_DELIVERED)
 								<div class="receive-button">
@@ -125,6 +130,44 @@
 		</div>
 	</div>
 </div>
+{{--分期弹框开始--}}
+	<div class="modal fade" id="installment-modal">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+					<h4 class="modal-title">选择分期期数</h4>
+				</div>
+				<div class="modal-body">
+					<table class="table table-bordered table-striped text-center">
+						<thead>
+						<tr>
+							<th class="text-center">期数</th>
+							<th class="text-center">费率</th>
+							<th></th>
+						</tr>
+						</thead>
+						<tbody>
+						@foreach(config('app.installment_fee_rate') as $count => $rate)
+							<tr>
+								<td>{{ $count }}期</td>
+								<td>{{ $rate }}%</td>
+								<td>
+									<button class="btn btn-primary btn-select-installment" data-count="{{ $count }}">选择</button>
+								</td>
+							</tr>
+						@endforeach
+						</tbody>
+					</table>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-default" type="button" data-dismiss="modal">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+{{--分期弹框结束--}}
+
 @endsection
 @section('scriptAfterJs')
 	<script>
@@ -172,5 +215,18 @@
                     });
             });
         });
+        
+        // 分期付款按钮
+        $('#btn-installment').click(function () {
+            $('#installment-modal').modal();
+        });
+        
+		$('.btn-select-installment').click(function () {
+		    // 调用创建分期付款接口
+			axios.post('{{ route('payment.installment', ['order' => $order->id]) }}', {count: $(this).data('count')})
+				.then(function (response) {
+				    console.log(response.data)
+                })
+        })
 	</script>
 @endsection

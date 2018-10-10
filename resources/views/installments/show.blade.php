@@ -72,7 +72,7 @@
 							@foreach($items as $item)
 								<tr>
 									<td>
-										{{ $item->sequence + 1 }}/{{ $installment->cuont }}期
+										{{ $item->sequence + 1 }}/{{ $installment->count }}期
 									</td>
 									<td>{{ $item->due_date->format('Y-m-d') }}</td>
 									<td>

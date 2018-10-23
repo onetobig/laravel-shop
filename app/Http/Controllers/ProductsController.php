@@ -76,8 +76,68 @@ class ProductsController extends Controller
             }
         }
 
+        // 只有当用户有输入搜索词或者使用了类目筛选时候才会做聚合
+        if ($search || isset($category)) {
+            $params['body']['aggs'] = [
+                'properties' => [
+                    'nested' => [
+                        'path' => 'properties',
+                    ],
+                    'aggs' => [
+                        'properties' => [
+                            'terms' => [
+                                'field' => 'properties.name',
+                            ],
+                            'aggs' => [
+                                'value' => [
+                                    'terms' => [
+                                        'field' => 'properties.value',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+        }
+
+        // 从用户请求参数获取 filters
+        $propertyFilters = [];
+        if ($filterString = $request->input('filters')) {
+            $filterArray = explode('|', $filterString);
+            foreach ($filterArray as $filter) {
+                // 将字符串用 : 拆分成两部分并且分别赋值给 $name 和 $value 两个变量
+                list($name, $value) = explode(':', $filter);
+                $propertyFilters[$name] = $value;
+
+                $params['body']['query']['bool']['filter'][] = [
+                    'nested' => [
+                        'path' => 'properties',
+                        'query' => [
+                            ['term' => ['properties.name' => $name]],
+                            ['term' => ['properties.value' => $value]],
+                        ],
+                    ],
+                ];
+            }
+        }
+
         $result = app('es')->search($params);
 
+        $properties = [];
+        // 如果返回结果里有 aggregations 字段，说明做了分面搜索
+        if (isset($result['aggregations'])) {
+            $properties = collect($result['aggregations']['properties']['properties']['buckets'])
+                ->map(function ($bucket) {
+                    return [
+                        'key' => $bucket['key'],
+                        'values' => collect($bucket['value']['buckets'])->pluck('key')->all(),
+                    ];
+                })
+                ->filter(function ($property) use ($propertyFilters) {
+                    return count($property['values']) > 1 && !isset($propertyFilters[$property['key']]);
+                });
+        }
         $productIds = collect($result['hits']['hits'])->pluck('_id')->all();
         $products = Product::query()
             ->whereIn('id', $productIds)
@@ -96,6 +156,8 @@ class ProductsController extends Controller
             ],
             'category' => $category ?? null,
             'categoryTree' => $categoryService->getCategoryTree(),
+            'properties' => $properties,
+            'propertyFilters' => $propertyFilters,
         ]);
     }
 

@@ -8,6 +8,7 @@
 					<div class="panel-body">
 						<div class="row">
 							<form action="{{ route('products.index') }}" class="form-inline search-form">
+								<input type="hidden" name="filters">
 								<a href="{{ route('products.index') }}" class="all-products">全部</a> &gt;
 								@if ($category)
 									@foreach($category->ancestors as $ancestor)
@@ -19,6 +20,15 @@
 									<span class="category">{{ $category->name }}<span> ></span></span>
 										<input type="hidden" name="category_id" value="{{ $category->id }}">
 								@endif
+								
+								{{--商品属性面包屑开始--}}
+								@foreach($propertyFilters as $name => $value)
+									<span class="filter">{{ $name }}:
+										<span class="filter-value">{{ $value }}</span>
+										<a href="javascript: removeFilterFromQuery('{{ $name }}')" class="remove-filter">x</a>
+									</span>
+								@endforeach
+								{{--商品属性面包屑结束--}}
 								<input type="text" class="form-control input-sm" name="search" placeholder="搜索">
 								<button class="btn btn-primary btn-sm">搜索</button>
 								<select name="order" id="" class="form-control input-sm pull-right">
@@ -45,6 +55,19 @@
 									</div>
 								</div>
 							@endif
+							{{--分面搜索结果开始--}}
+							{{--遍历聚合属性--}}
+							@foreach($properties as $property)
+								<div class="row">
+									<div class="col-xs-3 filter-key">{{ $property['key'] }}</div>
+									<div class="col-xs-9 filter-values">
+										@foreach($property['values'] as $value)
+											<a href="javascript: appendFilterToQuery('{{ $property['key'] }}', '{{ $value }}');">{{ $value }}</a>
+										@endforeach
+									</div>
+								</div>
+							@endforeach
+							{{--分面搜索结果结束--}}
 						</div>
 						
 						
@@ -80,6 +103,8 @@
 
 @section('scriptAfterJs')
 	<script>
+		let filters = {!! json_encode($filters) !!}
+		
 		$(document).ready(function () {
 		    let filters = {!! json_encode($filters) !!}
 			$('.search-form input[name=search]').val(filters.search);
@@ -87,7 +112,63 @@
         });
 		
 		$('.search-form select[name=order]').on('change', function () {
+		    let searches = parseSearch();
+		    if (searches['filters']) {
+		        $('.search-form input[name=filters]').val(searches['filters']);
+		    }
 		    $('.search-form').submit();
-        })
+        });
+		
+		// 解析当前的 url 里面的参数，并以 Key-Value 对象形式返回
+		function parseSearch() {
+		    let searches = {};
+		    
+		    location.search.substr(1).split('&').forEach(function (str) {
+		        let result = str.split('=');
+		        searches[decodeURIComponent(result[0])] = decodeURIComponent(result[1])
+		    });
+			
+			return searches;
+		}
+		
+		// 根据 Key-Value 对象构建查询
+		function buildSearch(searches) {
+		    // 初始化字符串
+		    let query = '?';
+			_.forEach(searches, function (value, key) {
+			    query += encodeURIComponent(key) + '=' + encodeURIComponent(value) + '&';
+            });
+			// 驱虎末尾的 & 符号
+			return query.substr(0, query.length - 1);
+		}
+		
+		// 将新的 filter 追加到当前的 url 中
+		function appendFilterToQuery(name, value) {
+		    let searches = parseSearch();
+			if (searches['filters']) {
+		        searches['filters'] += '|' + name + ':' +value;
+			} else {
+		        searches['filters'] = name + ':' + value
+			}
+			location.search = buildSearch(searches)
+		}
+		
+		function removeFilterFromQuery(name) {
+		    let searches = parseSearch();
+		    if (!searches['filters']) {
+		        return;
+		    }
+		    
+		    let filters = [];
+		    searches['filters'].split('|').forEach(function (filter) {
+			    let result = filter.split(':');
+			    if (result[0] === name) {
+			        return;
+			    }
+			    filters.push(filter);
+            });
+		    searches['filters'] = filters.join('|');
+			location.search = buildSearch(searches);
+		}
 	</script>
 @endsection

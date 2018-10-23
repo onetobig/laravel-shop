@@ -29,7 +29,7 @@ class ProductSearchBuilder
 
     public function paginate($size, $page)
     {
-        $this->params['body']['form'] = ($page - 1) * $size;
+        $this->params['body']['from'] = ($page - 1) * $size;
         $this->params['body']['size'] = $size;
         return $this;
     }
@@ -104,9 +104,9 @@ class ProductSearchBuilder
     }
 
     // 属性筛选
-    public function propertyFilter($name, $value)
+    public function propertyFilter($name, $value, $type = 'filter')
     {
-        $this->params['body']['query']['bool']['filter'][] = [
+        $this->params['body']['query']['bool'][$type][] = [
             'nested' => [
                 'path' =>  'properties',
                 'query' => [
@@ -114,6 +114,14 @@ class ProductSearchBuilder
                 ],
             ],
         ];
+        return $this;
+    }
+
+    // 设置 minimum_should_match 参数
+    public function minShouldMatch($count)
+    {
+        $this->params['body']['query']['bool']['minimum_should_match'] = (int)$count;
+
         return $this;
     }
 

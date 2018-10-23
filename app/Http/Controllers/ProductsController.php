@@ -8,16 +8,18 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\SearchBuilders\ProductSearchBuilder;
 use App\Services\CategoryService;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class ProductsController extends Controller
 {
-    public function index(Request $request, CategoryService $categoryService, ProductSearchBuilder $builder)
+    public function index(Request $request, CategoryService $categoryService)
     {
         $page = $request->input('page', 1);
         $perPage = 16;
 
+        $builder = (new ProductSearchBuilder())->onSale()->paginate($perPage, $page);
         // 按类目检索
         if ($request->input('category_id') && $category = Category::find($request->input('category_id'))) {
             $builder->category($category);
@@ -73,8 +75,7 @@ class ProductsController extends Controller
         }
         $productIds = collect($result['hits']['hits'])->pluck('_id')->all();
         $products = Product::query()
-            ->whereIn('id', $productIds)
-            ->orderByRaw(sprintf("FIND_IN_SET(id, '%s')", join(',', $productIds)))
+            ->byIds($productIds)
             ->get();
 
         $pager = new LengthAwarePaginator($products, $result['hits']['total'], $perPage, $page, [
@@ -94,7 +95,7 @@ class ProductsController extends Controller
         ]);
     }
 
-    public function show(Product $product, Request $request)
+    public function show(Product $product, Request $request, ProductService $service)
     {
         if (!$product->on_sale) {
             throw new InvalidRequestException('商品未上架');
@@ -113,10 +114,17 @@ class ProductsController extends Controller
             ->limit(10)
             ->get();
 
+        $similarProductIds = $service->getSimilarProductIds($product, 4);
+        $similarProducts = Product::query()
+            ->byIds($similarProductIds)
+            ->get();
+
+
         return view('products.show', [
             'product' => $product->load(['skus']),
             'favored' => $favored,
             'reviews' => $reviews,
+            'similar' => $similarProducts,
         ]);
     }
 

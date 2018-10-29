@@ -5,6 +5,7 @@ namespace App\Providers;
 use Carbon\Carbon;
 use Illuminate\Support\ServiceProvider;
 use Elasticsearch\ClientBuilder as ESClientBuilder;
+use Illuminate\Support\Str;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,6 +17,12 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Carbon::setLocale('zh');
+
+        if (app()->environment('local')) {
+            \DB::listen(function ($query) {
+                \Log::info(Str::replaceArray('?', $query->bindings, $query->sql));
+            });
+        }
     }
 
     /**
